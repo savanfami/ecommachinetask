@@ -1,13 +1,17 @@
 import { Router } from 'express'
-import { register } from '../controllers/authController'
-import {upload} from '../utils/common/multer'
+import {  loginController, registerController, refreshTokenController } from '../controllers/authController'
+import { upload } from '../utils/common/multer'
+import { refreshTokenMiddleware } from '../middlewares/refreshtokenMiddleware'
 
-const router=Router()
+const router = Router()
 
 router.route('/register')
-    .post(upload.single("profileImage"), register);
+    .post(upload.single("profilephoto"), registerController);
 
+router.route('/login')
+    .post(loginController);
 
+router.route('/refresh-token').post(refreshTokenMiddleware,refreshTokenController);
 
 
 export default router

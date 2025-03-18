@@ -17,9 +17,9 @@ declare global {
 }
 
 
-export const jwtMiddleware = (requiredRole?: string) => {
+export const jwtMiddleware = () => {
     return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        console.log('inside jwt')
+        console.log('inside verificaiton jwt')
         const token = req.cookies.access_token;
         if (!token) {
             res.status(401).json({ message: 'no token found' });
@@ -31,12 +31,7 @@ export const jwtMiddleware = (requiredRole?: string) => {
                 throw new Error('ACCESS_TOKEN_SECRET is not defined');
             }
             const decoded = jwt.verify(token, secretKey) as jwtPayload;
-            console.log(decoded,'decoded value from jwt')
             req.user = decoded;
-            // if (requiredRole && req.user.role !== requiredRole) {
-            //     res.status(403).json({ message: 'Access denied' });
-            //     return
-            // }
             next();
         } catch (error) {
             res.status(403).json({ message: 'failed to authenticate token' });

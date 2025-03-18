@@ -1,31 +1,30 @@
-// import jwt from 'jsonwebtoken'
-// import { config } from 'dotenv'
+import jwt from 'jsonwebtoken'
+import { config } from 'dotenv'
 
-// config()
+config()
 
-// const accesSecret = process.env.JWT_SECRET as string
-// const refreshSecret = process.env.REFRESH_SECRET as string
-// console.log(accesSecret, 'secret key')
+const accesSecret = process.env.JWT_SECRET as string
+const refreshSecret = process.env.REFRESH_SECRET as string
 
-// export const generateAccesstoken = (userId: string) => {
-//     try {
-//         return jwt.sign({ id }, accesSecret, { expiresIn: '15m' })
-//     } catch (error) {
-//         throw new Error('failed to access  token')
+export const generateAccesstoken = (userId: string) => {
+    try {
+        return jwt.sign({ userId }, accesSecret, { expiresIn: '15m' })
+    } catch (error) {
+        throw new Error('failed to access  token')
 
-//     }
-// }
-
+    }
+}
 
 
-// export const generateRefreshToken = (userId: string) => {
-//     try {
-//         return jwt.sign({ id }, refreshSecret, {
-//             expiresIn: '7d',
-//         });
-//     } catch (error) {
-//         throw new Error('failed to refresh  token')
 
-//     }
-// };
+export const generateRefreshToken = (userId: string) => {
+    try {
+        return jwt.sign({ userId }, refreshSecret, {
+            expiresIn: '7d',
+        });
+    } catch (error) {
+        throw new Error('failed to refresh  token')
+
+    }
+};
 
