@@ -3,7 +3,7 @@ import mongoose, { Document, Schema } from "mongoose";
 interface IProduct extends Document {
   product_name: string;
   description?: string;
-  price: string;
+  price: number;
   category: string;
   brand: string;
   product_image: string;
@@ -20,6 +20,10 @@ const productSchema = new Schema<IProduct>(
     description: {
       type: String,
       trim: true,
+    },
+    price:{
+      type:Number,
+      required:true
     },
     category: {
       type: String,

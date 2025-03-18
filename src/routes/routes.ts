@@ -3,7 +3,8 @@ import { loginController, registerController, refreshTokenController } from '../
 import { upload } from '../utils/common/multer'
 import { refreshTokenMiddleware } from '../middlewares/refreshtokenMiddleware'
 import { jwtMiddleware } from '../middlewares/authMiddleware'
-import { addBrand } from '../controllers/brandController'
+import { addBrand, getAllBrand } from '../controllers/brandController'
+import { addProduct } from '../controllers/productController'
 
 const router = Router()
 
@@ -24,7 +25,11 @@ router.route('/brands')
         upload.single('brand_logo'),
         jwtMiddleware,
         addBrand
-    ).get()
+    ).get(jwtMiddleware,getAllBrand)
 
+
+//product routes
+
+router.route('/products').post(upload.single('product_image'),jwtMiddleware,addProduct)
 
 export default router

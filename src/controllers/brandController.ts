@@ -12,6 +12,11 @@ export const addBrand = async (req: Request, res: Response, next: NextFunction) 
             throw ErrorResponse.badRequest('all fields required(brand_name,brand_logo,categories)')
         }
 
+        const existingBrand = await brandModel.findOne({ brand_name });
+        if (existingBrand) {
+           throw ErrorResponse.conflict('brand already exist')
+        }
+
         const newBrand = new brandModel({
             brand_name,
             brand_logo,
@@ -27,3 +32,15 @@ export const addBrand = async (req: Request, res: Response, next: NextFunction) 
     }
 }
 
+
+export const getAllBrand=async(req:Request,res:Response,next:NextFunction)=>{
+    try {
+        const brands=await brandModel.find().select('brand_name categories')
+        if(brands.length===0){
+            throw ErrorResponse.notFound('no brands found')
+        }
+        res.status(200).json({message:'brand fetched successfully',brands});
+    } catch (error) {
+        next(error)
+    }
+}
