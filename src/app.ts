@@ -17,7 +17,7 @@ app.use(morgan('dev'))
 
 
 
-app.use('/api/auth', authroutes);
+app.use('/api', authroutes);
 
 
 

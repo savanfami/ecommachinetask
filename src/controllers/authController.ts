@@ -19,7 +19,7 @@ export const registerController = async (req: Request, res: Response, next: Next
         const hashedPassword = await bcrypt.hash(value.password, 10);
         const user = new userModel({ username: value.username, email: value.email, password: hashedPassword, profilephoto });
         await user.save();
-        res.status(201).json({ message: "user registered successfully" });
+        res.status(201).json({ message: "user registered successsfully" });
     } catch (error) {
         next(error);
     }
