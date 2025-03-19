@@ -4,7 +4,7 @@ import { upload } from '../utils/common/multer'
 import { refreshTokenMiddleware } from '../middlewares/refreshtokenMiddleware'
 import { jwtMiddleware } from '../middlewares/authMiddleware'
 import { addBrand, getAllBrand } from '../controllers/brandController'
-import { addProduct } from '../controllers/productController'
+import { addProduct, editProduct } from '../controllers/productController'
 
 const router = Router()
 
@@ -31,5 +31,8 @@ router.route('/brands')
 //product routes
 
 router.route('/products').post(upload.single('product_image'),jwtMiddleware,addProduct)
+router.route('/products/:id').patch(upload.single('product_image'),jwtMiddleware,editProduct)
+// router.route('/products/:id').delete(upload.single('product_image'),jwtMiddleware,editProduct)
+
 
 export default router
