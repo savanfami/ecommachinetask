@@ -5,6 +5,7 @@ interface IUser extends Document{
     email:string;
     password:string;
     profilephoto?:string;
+    blockedUsers?:string[]
 }
 
 
@@ -15,6 +16,9 @@ const userSchema=new Schema<IUser>(
         email:{type:String,required:true,unique:true},
         password: { type: String, required: true },
         profilephoto: { type: String },
+        blockedUsers:[{
+            type:mongoose.Schema.Types.ObjectId
+        }]
     },
     {timestamps:true}
 )

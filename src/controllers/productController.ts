@@ -40,7 +40,7 @@ export const addProduct = async (req: Request, res: Response, next: NextFunction
 export const editProduct = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
-        const userId = req.user;                                                  
+        const userId = req.user;
         let updatedData = req.body;
         const product_image = req.file?.filename
         const product = await ProductModel.findById(id)
@@ -74,38 +74,28 @@ export const editProduct = async (req: Request, res: Response, next: NextFunctio
 }
 
 
-// export const deleteProduct = async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const { id } = req.params;
-//         const userId = req.user;                                                  
-//         const product_image = req.file?.filename
-//         const product = await ProductModel.findById(id)
-//         if (!product) {
-//             throw ErrorResponse.notFound('Product not found')
-//         }
-//         if (product.addedBy.toString() !== userId) {
-//             throw ErrorResponse.unauthorized('Unauthorised to edit the product')
-//         }
+export const deleteProduct = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user;
+        const product = await ProductModel.findById(id);
+        if (!product) {
+            throw ErrorResponse.notFound('no product found with the provided id')
+        }
+        if (product.addedBy.toString() !== userId) {
+            throw ErrorResponse.unauthorized('Unauthorised to delete the product')
+        }
+        await ProductModel.findByIdAndDelete(id);
+        res.status(200).json({ message: 'product deleted successfully' })
+    } catch (error) {
+        next(error)
+    }
+}
 
-//         if (updatedData.brand) {
-//             const brandDocument = await brandModel.findOne({ brand_name: updatedData.brand })
-//             if (!brandDocument) {
-//                 throw ErrorResponse.badRequest('brand not found')
-//             }
-//             if (updatedData.category && !JSON.parse(brandDocument.categories[0]).includes(updatedData.category)) {
-//                 throw ErrorResponse.badRequest('category not found in brand')
-//             }
-//         }
-
-//         if (product_image) {
-//             updatedData = { ...updatedData, product_image };
-//         }
-
-//         const updatedProduct = await ProductModel.findByIdAndUpdate(id, updatedData, { new: true })
-//         console.log(updatedProduct,'updated product')
-//         res.status(200).json({ message: 'product updated successfully', product: updatedProduct })
-
-//     } catch (error) {
-//         next(error)
-//     }
-// }
+export const allProduct=async(req:Request,res:Response,next:NextFunction)=>{
+    try {
+        console.log('all prouct')
+    } catch (error) {
+        next(error)
+    }
+}
