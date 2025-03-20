@@ -40,7 +40,7 @@ Complete API documentation is available at:
 3. Create a `.env` file in the root directory with the following variables:
    ```
    PORT=port
-   MONGODB_URI=your_mongodb_connection_string
+   MONGO_URI=your_mongodb_connection_string
    REFRESH_SECRET=your_jwt_secret
    JWT_SECRET=your_jwt_secret
 
