@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { loginController, registerController, refreshTokenController } from '../controllers/authController'
+import { loginController, registerController, refreshTokenController, toggleBlock } from '../controllers/authController'
 import { upload } from '../utils/common/multer'
 import { refreshTokenMiddleware } from '../middlewares/refreshtokenMiddleware'
 import { jwtMiddleware } from '../middlewares/authMiddleware'
@@ -18,6 +18,9 @@ router.route('/auth/login')
 
 router.route('/auth/refresh-token').post(refreshTokenMiddleware, refreshTokenController);
 
+//route handling blocking and unblocking 
+
+router.route('/users/toggle-block/:id').post(jwtMiddleware, toggleBlock)
 
 //brand routes
 router.route('/brands')
@@ -25,13 +28,13 @@ router.route('/brands')
         upload.single('brand_logo'),
         jwtMiddleware,
         addBrand
-    ).get(jwtMiddleware,getAllBrand)
+    ).get(jwtMiddleware, getAllBrand)
 
 
 //product routes
 
-router.route('/products').post(upload.single('product_image'),jwtMiddleware,addProduct).get(jwtMiddleware,allProduct)
-router.route('/products/:id').put(upload.single('product_image'),jwtMiddleware,editProduct).delete(jwtMiddleware,deleteProduct)
+router.route('/products').post(upload.single('product_image'), jwtMiddleware, addProduct).get(jwtMiddleware, allProduct)
+router.route('/products/:id').put(upload.single('product_image'), jwtMiddleware, editProduct).delete(jwtMiddleware, deleteProduct)
 
 
 

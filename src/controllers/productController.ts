@@ -2,6 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import { ErrorResponse } from "../utils/common/ErrorResponse";
 import { ProductModel } from "../models/productMode";
 import { brandModel } from "../models/brandModel";
+import { queryObject } from "../utils/types";
+import { userModel } from "../models/userMode";
+import mongoose from "mongoose";
 
 export const addProduct = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -16,7 +19,7 @@ export const addProduct = async (req: Request, res: Response, next: NextFunction
         if (!brandDocument) {
             throw ErrorResponse.notFound('brand not found ')
         }
-        if (!JSON.parse(brandDocument.categories[0]).includes(category)) {
+        if (!brandDocument.categories.includes(category)) {
             throw ErrorResponse.notFound('Product category not found in brand category');
         }
         const product = new ProductModel({
@@ -56,7 +59,7 @@ export const editProduct = async (req: Request, res: Response, next: NextFunctio
             if (!brandDocument) {
                 throw ErrorResponse.badRequest('brand not found')
             }
-            if (updatedData.category && !JSON.parse(brandDocument.categories[0]).includes(updatedData.category)) {
+            if (updatedData.category && !brandDocument.categories.includes(updatedData.category)) {
                 throw ErrorResponse.badRequest('category not found in brand')
             }
         }
@@ -92,10 +95,34 @@ export const deleteProduct = async (req: Request, res: Response, next: NextFunct
     }
 }
 
-export const allProduct=async(req:Request,res:Response,next:NextFunction)=>{
+export const allProduct = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log('all prouct')
+        const userId = req.user;
+        let query: any = {};
+        if (req.query.brand) query.brand = req.query.brand;
+        if (req.query.category) query.category = req.query.category;
+
+        const sortField = req.query.sortBy === "price" ? "price" : "product_name";
+        const sortOrder = req.query.order === "desc" ? -1 : 1;
+
+        //users who have blocked the current logged in user
+        const usersBlockingMe = await userModel.find({
+            blockedUsers: { $in: [userId] }
+        }).select('_id');
+
+        const blockedByUserIds = usersBlockingMe.map(user => user._id);
+        if (blockedByUserIds.length > 0) {
+            query.addedBy = { $nin: blockedByUserIds };
+        }
+
+        const products = await ProductModel.find(query)
+            .sort({ [sortField]: sortOrder });
+    
+        if(products.length===0){
+            throw ErrorResponse.notFound('No products found matching the search criteria ')
+        }
+        res.status(200).json(products);
     } catch (error) {
-        next(error)
+        next(error);
     }
-}
+};

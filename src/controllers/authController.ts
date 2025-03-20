@@ -4,13 +4,14 @@ import { userModel } from "../models/userMode";
 import { signUpvalidation } from "../utils/validator/signUpvalidation";
 import { loginValidator } from "../utils/validator/loginValidator";
 import { generateAccesstoken, generateRefreshToken } from "../utils/generateToken";
+import mongoose, { Types } from "mongoose";
 
 export const registerController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { error, value } = signUpvalidation.validate(req.body)
         const profilephoto = req.file?.filename
         if (error) {
-          return next({ status: 400, message: error?.message });
+            return next({ status: 400, message: error?.message });
         }
         const existingUser = await userModel.findOne({ email: value.email });
         if (existingUser) {
@@ -83,3 +84,28 @@ export const refreshTokenController = async (req: Request, res: Response, next: 
     }
 }
 
+
+export const toggleBlock = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params
+        const objectId: Types.ObjectId = new mongoose.Types.ObjectId(id);
+        const userId = req.user
+        const user = await userModel.findById(userId);
+        if (user?.blockedUsers) {
+            const isBlocked = user.blockedUsers.includes(objectId);
+            if (isBlocked) {
+                user.blockedUsers = user.blockedUsers.filter(
+                    (id) => id !== id
+                );
+            } else {
+                user.blockedUsers.push(objectId);
+            }
+            await user.save();
+            res.status(200).json({
+                message: isBlocked ? "User unblocked successfully" : "User blocked successfully"
+            });
+        }
+    } catch (error) {
+        next(error)
+    }
+}
